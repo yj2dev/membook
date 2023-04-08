@@ -13,28 +13,40 @@ function App() {
   const webcamRef = useRef(null);
   const imageRef = useRef(null);
   const [imageURL, setImageURL] = useState(null);
+
+  const dataURLtoFile = (dataurl, fileName) => {
+    const arr = dataurl.split(",");
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new File([u8arr], fileName, { type: mime });
+  };
+
   const capture = React.useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
     console.log("imageSrc >> ", imageSrc);
     // imageRef.current = imageSrc;
     setImageURL(imageSrc);
 
-    // axios.get("http://localhost:8080/apple").then((res) => {
-    //   console.log("res >> ", res);
-    // });
+    const file = dataURLtoFile(imageSrc, "username-day.jpeg");
+    console.log(file);
 
     const formData = new FormData();
 
-    formData.append("file", imageSrc);
+    formData.append("file", file);
 
-    console.log("form .. >> ", formData.get("file"));
+    // console.log("form .. >> ", formData.get("image"));
 
-    axios
-      .post("http://localhost:8080/read-picture", formData)
-      // .post("http://localhost:8080/read-picture", { test: "strawberry" })
-      .then((res) => {
-        console.log("res >> ", res);
-      });
+    // {"Content-Type": "multipart/form-data"}
+    axios.post("http://localhost:8080/read-picture", formData).then((res) => {
+      console.log("res >> ", res);
+    });
   }, [webcamRef]);
 
   return (

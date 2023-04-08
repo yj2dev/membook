@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { multerOptions } from './common/multerOptions';
 
 @Controller()
 export class AppController {
@@ -22,24 +23,18 @@ export class AppController {
     return 'Beautiful apple...';
   }
 
-  @Post('read-picture')
+  @Post('/upload')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log('file >> ', file);
-
-    return 'succeed';
+    console.log(file);
   }
 
-  // @Post('read-picture')
-  // readPicture(@Body('imageSrc') imageSrc: string): string {
-  //   console.log('imageSrc >> ', imageSrc);
-  //   // console.log('req >> ', req);
-  //   return 'Good';
-  // }
-  //
-  // @Post('upload')
-  // @UseInterceptors(FileInterceptor('file'))
-  // uploadFile(@UploadedFile() file: Express.Multer.File) {
-  //   console.log(file);
-  // }
+  @Post('read-picture')
+  @UseInterceptors(FileInterceptor('file', multerOptions))
+  uploadFile2(@UploadedFile() file: Express.Multer.File) {
+    console.log('file >> ', file);
+    console.log(file.filename);
+    return { state: 'succeed', file };
+    // return 'succeed';
+  }
 }
