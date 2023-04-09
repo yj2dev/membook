@@ -34,7 +34,7 @@ function App() {
     // imageRef.current = imageSrc;
     setImageURL(imageSrc);
 
-    const file = dataURLtoFile(imageSrc, "username-day.jpeg");
+    const file = dataURLtoFile(imageSrc, "username-day");
     console.log(file);
 
     const formData = new FormData();
